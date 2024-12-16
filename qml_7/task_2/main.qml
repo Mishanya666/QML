@@ -25,7 +25,6 @@ ApplicationWindow {
             spacing: 5
             anchors.horizontalCenter: parent
 
-            // Звездочки для отображения пароля с динамическим цветом
             Repeater {
                 model: 6
                 Text {
