@@ -1,8 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.5
-import QtQuick.Layouts 1.3
-import QtQuick.Shapes 1.15
 
 Window {
     width: 400
@@ -10,14 +8,11 @@ Window {
     visible: true
     title: qsTr("Task_for_ListView_Model")
 
-    property int defMargin: 10
-
     ListModel {
         id: my_model
     }
 
     Page {
-        id: page
         anchors.fill: parent
 
         Rectangle {
@@ -45,98 +40,23 @@ Window {
             spacing: 5
             clip: true
             model: my_model
-            delegate: Item {
-                width: parent.width
-                height: 60
-
-                Rectangle {
-                    anchors.fill: parent
-                    color: index % 2 === 0 ? "#F5F5F5" : "#E0E0E0"
-                    radius: 8
-
-                    RowLayout {
-                        anchors.fill: parent
-                        spacing: 12
-                        anchors.margins: 8
-
-                        Text {
-                            text: model.name
-                            font.pointSize: 14
-                            color: "#212121"
-                            Layout.fillWidth: true
-                        }
-                        Text {
-                            text: model.time
-                            font.pointSize: 12
-                            color: "#757575"
-                            horizontalAlignment: Text.AlignRight
-                        }
-                    }
-                }
-
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: {
-                        my_model.remove(index);
-                    }
-                }
+            delegate: MessageItem {
+                name: model.name
+                time: model.time
             }
         }
 
-        Rectangle {
+        Footer {
             id: footer
-            height: 70
-            width: parent.width
             anchors.bottom: parent.bottom
-            color: "#F9F9F9"
-            border.color: "#BDBDBD"
-            radius: 10
 
-            signal newMessage(string msg)
-
-            RowLayout {
-                anchors.fill: parent
-                spacing: 10
-                anchors.margins: 10
-
-                TextField {
-                    id: edtText
-                    Layout.fillWidth: true
-                    placeholderText: "Write your message..."
-                    font.pointSize: 14
-                    color: "#212121"
-                    background: Rectangle {
-                        color: "white"
-                        radius: 5
-                        border.color: "#BDBDBD"
-                    }
-                }
-
-                Button {
-                    id: btnAddItem
-                    text: "Send"
-                    background: Rectangle {
-                        color: edtText.text.trim() === "" ? "#BDBDBD" : "#6200EE"
-                        radius: 5
-                    }
-                    onClicked: {
-                        if (edtText.text.trim() !== "") {
-                            footer.newMessage(edtText.text);
-                            edtText.clear();
-                        }
-                    }
-                }
-            }
-        }
-
-        Component.onCompleted: {
-            footer.newMessage.connect(function(msg) {
+            onNewMessage: { 
                 var newMsg = {
                     name: msg,
                     time: Qt.formatTime(new Date(), "hh:mm:ss")
                 };
                 my_model.append(newMsg);
-            });
+            }
         }
     }
 }
